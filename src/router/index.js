@@ -5,12 +5,9 @@ import moduleRoutes from "./importAll";
 const constantRoutes = [
   {
     path: "/",
-    name: "home",
-    component: HomeView,
+    redirect: "/map-line",
   },
 ];
-
-console.log(import.meta.env.BASE_URL, "import.meta.env.BASE_URL");
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
