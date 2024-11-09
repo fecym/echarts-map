@@ -87,90 +87,74 @@ export const mapOptions = {
 
 export const pinghuCoords = { name: "平湖市", coords: [121.015142, 30.67575] };
 
-export const provinceCenters = [
-  { name: "北京", coords: [116.407396, 39.9042] },
-  { name: "天津", coords: [117.190182, 39.125596] },
-  { name: "上海", coords: [121.473701, 31.230416] },
-  { name: "重庆", coords: [106.504962, 29.533155] },
-  { name: "河北", coords: [114.502461, 38.045474] },
-  { name: "山西", coords: [112.549248, 37.857014] },
-  { name: "辽宁", coords: [123.429096, 41.796767] },
-  { name: "吉林", coords: [125.3245, 43.886841] },
-  { name: "黑龙江", coords: [126.642464, 45.756967] },
-  { name: "江苏", coords: [118.767413, 32.041544] },
-  { name: "浙江", coords: [120.153576, 30.287459] },
-  { name: "安徽", coords: [117.283042, 31.86119] },
-  { name: "福建", coords: [119.306239, 26.075302] },
-  { name: "江西", coords: [115.892151, 28.676493] },
-  { name: "山东", coords: [117.000923, 36.675807] },
-  { name: "河南", coords: [113.665412, 34.757975] },
-  { name: "湖北", coords: [114.298572, 30.584355] },
-  { name: "湖南", coords: [112.982279, 28.19409] },
-  { name: "广东", coords: [113.280637, 23.125178] },
-  { name: "广西", coords: [108.320004, 22.82402] },
-  { name: "海南", coords: [110.33119, 20.031971] },
-  { name: "四川", coords: [104.065735, 30.659462] },
-  { name: "贵州", coords: [106.713478, 26.578343] },
-  { name: "云南", coords: [102.712251, 25.040609] },
-  { name: "西藏", coords: [91.132212, 29.660361] },
-  { name: "陕西", coords: [108.948024, 34.263161] },
-  { name: "甘肃", coords: [103.823557, 36.058039] },
-  { name: "青海", coords: [101.778916, 36.623178] },
-  { name: "宁夏", coords: [106.278179, 38.46637] },
-  { name: "新疆", coords: [87.617733, 43.792818] },
-  { name: "香港", coords: [114.109497, 22.396428] },
-  { name: "澳门", coords: [113.54909, 22.198951] },
-  { name: "台湾", coords: [121.509062, 25.044332] },
-];
+export const provinceCenters = mapJson.features
+  .filter(x => x.properties.name)
+  .map(x => x.properties);
+export const provinceNames = provinceCenters.map(x => x.name);
 
-export const mapScatter = {
-  type: "scatter",
-  zlevel: 2,
-  coordinateSystem: "geo",
-  symbol: "pin",
-  symbolSize: 10,
-  label: {
-    show: true,
-    position: "right",
-    formatter: "{b}",
-  },
-  data: provinceCenters.map((item) => {
-    return {
-      name: item.name,
-      value: item.coords,
-    };
-  }),
-};
-export const mapLines = {
-  type: "lines",
-  zlevel: 2,
-  // 线特效
-  effect: {
-    show: true,
-    period: 4, // 箭头指向速度，值越小速度越快
-    trailLength: 0.02, // 特效尾迹长度[0,1]值越大，尾迹越长重
-    symbol: "arrow", // 箭头图标
-    symbolSize: 5, // 图标大小
-  },
-  // 线条样式配置
-  lineStyle: {
-    width: 1, // 线条宽度
-    opacity: 0.6, // 线条透明度
-    curveness: 0.3, // 线条曲直度
-  },
-  // 涟漪特效
-  rippleEffect: {
-    period: 4, // 动画时间
-    brushType: "stroke", //波纹绘制方式
-    scale: 4, // 波纹圆环大小
-  },
-  // 线条数据
-  data: [
-    {
-      coords: [
-        [87.9236, 43.5883],
-        [113.27, 23.13],
-      ],
+export function getCoordsByName(name) {
+  return provinceCenters.find(item => item.name === name);
+}
+
+/**
+ *
+ * @param coords
+ * @param name
+ * @returns {{data: *, symbolSize: number, name, itemStyle: {color: string}, coordinateSystem: string, label: {formatter: string, show: boolean, position: string}, type: string}}
+ */
+export function genPointSeries(coords, name) {
+  return {
+    type: "scatter",
+    coordinateSystem: "geo",
+    name: name,
+    data: coords.map(item => {
+      return {
+        name: item.name,
+        value: item.center || item.coords,
+      };
+    }),
+    symbolSize: 10,
+    label: {
+      show: true,
+      position: "right",
+      formatter: "{b}",
     },
-  ],
-};
+    itemStyle: {
+      color: "red",
+    },
+  };
+}
+
+/**
+ * 生成线图
+ * @param data
+ * @returns {{lineStyle: {curveness: number, width: number, opacity: number}, data, effect: {symbol: string, period: number, symbolSize: number, show: boolean, trailLength: number}, zlevel: number, rippleEffect: {period: number, brushType: string, scale: number}, type: string}}
+ */
+export function genLinesSeries(data) {
+  return {
+    type: "lines",
+    zlevel: 2,
+    // 线特效
+    effect: {
+      show: true,
+      period: 4, // 箭头指向速度，值越小速度越快
+      trailLength: 0.02, // 特效尾迹长度[0,1]值越大，尾迹越长重
+      symbol: "arrow", // 箭头图标
+      symbolSize: 5, // 图标大小
+    },
+    // 线条样式配置
+    lineStyle: {
+      width: 1, // 线条宽度
+      opacity: 0.6, // 线条透明度
+      curveness: 0.3, // 线条曲直度
+    },
+    // 涟漪特效
+    rippleEffect: {
+      period: 4, // 动画时间
+      brushType: "stroke", //波纹绘制方式
+      scale: 4, // 波纹圆环大小
+    },
+    // 线条数据 { coords: [[87.9236, 43.5883], [113.27, 23.13]] },
+    data,
+  };
+}

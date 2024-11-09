@@ -5,16 +5,32 @@
   </div>
 </template>
 <script setup>
-import { onBeforeUnmount, onMounted, ref } from "vue";
 import * as echarts from "echarts";
 // import "echarts-gl";
+import { onBeforeUnmount, onMounted, ref } from "vue";
 import mapJson from "@/assets/json/china.json";
-import { mapName, mapOptions } from "@/utils/contant";
+
+import {
+  genLinesSeries,
+  genPointSeries,
+  getCoordsByName,
+  mapName,
+  mapOptions,
+  pinghuCoords,
+  provinceNames,
+} from "@/utils/contant";
 import MapHeader from "@/views/map-header.vue";
+import cloneDeep from "lodash/cloneDeep";
 
 const mapChart = ref(null);
 const timer = ref(null);
 const index = ref(-1);
+const options = ref(null);
+
+options.value = cloneDeep(mapOptions);
+
+const pointSeries = genPointSeries([pinghuCoords], "平湖市");
+options.value.series.push(pointSeries);
 
 function resizeMap() {
   mapChart.value?.resize();
@@ -23,20 +39,53 @@ function resizeMap() {
 function initMap() {
   mapChart.value = echarts.init(document.getElementById("map-container"));
   echarts.registerMap(mapName, mapJson);
-  mapChart.value.setOption(mapOptions);
+  mapChart.value.setOption(options.value);
   window.addEventListener("resize", resizeMap);
 }
 
 function onMouseover(ev) {
-  console.log(ev.data, "ev");
+  const data = ev.data;
+  console.log(data, "ev");
   // 停止定时器，清除之前的高亮
   clearInterval(timer.value);
   timer.value = null;
-  console.log(timer.value);
   mapChart.value.dispatchAction({
     type: "downplay",
     seriesIndex: 0,
-    dataIndex: index.value,
+    name: data.name,
+  });
+  if (!data.adcode || !data.name) return;
+  highlightAreaAndAddPoint(data.name);
+}
+
+function highlightAreaAndAddPoint(name) {
+  if (options.value.series.length > 2) {
+    options.value.series.length = Math.min(options.value.series.length, 2);
+  }
+
+  const coordsObj = getCoordsByName(name);
+
+  const lineData = [{ coords: [pinghuCoords.coords, coordsObj.center] }];
+  // 添加一个点
+  options.value = {
+    ...options.value,
+    series: [
+      ...options.value.series,
+      genPointSeries([coordsObj], name),
+      genLinesSeries(lineData),
+    ],
+  };
+  mapChart.value.setOption(options.value);
+  // 当前下标高亮
+  mapChart.value.dispatchAction({
+    type: "highlight",
+    seriesIndex: 0,
+    name,
+  });
+  mapChart.value.dispatchAction({
+    type: "showTip",
+    seriesIndex: 0,
+    name,
   });
 }
 
@@ -49,11 +98,11 @@ function bindEvent() {
   // 鼠标划入
   mapChart.value.on("mouseover", onMouseover);
   // 鼠标划出重新定时器开始
-  mapChart.value.on("mouseout", mapActive);
+  // mapChart.value.on("mouseout", mapActive);
 }
 
 function mapActive() {
-  const dataLength = mapJson.features.length;
+  const dataLength = provinceNames.length;
   index.value = 0;
   clearInterval(timer.value);
   timer.value = setInterval(() => {
@@ -61,28 +110,18 @@ function mapActive() {
     mapChart.value.dispatchAction({
       type: "downplay",
       seriesIndex: 0,
-      dataIndex: index.value,
+      name: provinceNames[index.value],
     });
     // 计算下一个要高亮的索引
     index.value = (index.value + 1) % dataLength;
-    // 当前下标高亮
-    mapChart.value.dispatchAction({
-      type: "highlight",
-      seriesIndex: 0,
-      dataIndex: index.value,
-    });
-    mapChart.value.dispatchAction({
-      type: "showTip",
-      seriesIndex: 0,
-      dataIndex: index.value,
-    });
-  }, 2000);
+    highlightAreaAndAddPoint(provinceNames[index.value]);
+  }, 3000);
 }
 
 onMounted(() => {
   initMap();
   bindEvent();
-  mapActive();
+  // mapActive();
 });
 onBeforeUnmount(() => {
   clearInterval(timer.value);

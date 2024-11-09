@@ -7,36 +7,30 @@
 <script setup>
 import { onBeforeUnmount, onMounted, ref } from "vue";
 import * as echarts from "echarts";
-import "echarts-gl";
+// import "echarts-gl";
 import mapJson from "@/assets/json/china.json";
 import {
-  mapLines,
+  genLinesSeries,
+  genPointSeries,
   mapName,
   mapOptions,
-  mapScatter,
   pinghuCoords,
   provinceCenters,
 } from "@/utils/contant";
 import MapHeader from "@/views/map-header.vue";
 
 const mapChart = ref(null);
-const index = ref(-1);
 
-const lineData = provinceCenters.map((x) => {
-  return {
-    coords: [pinghuCoords.coords, x.coords],
-  };
+const lineData = provinceCenters.map(x => {
+  return { coords: [pinghuCoords.coords, x.center] };
 });
 
 const options = {
   ...mapOptions,
   series: [
     ...mapOptions.series,
-    mapScatter,
-    {
-      ...mapLines,
-      data: lineData,
-    },
+    genPointSeries(provinceCenters, "中心点"),
+    genLinesSeries(lineData),
   ],
 };
 

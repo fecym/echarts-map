@@ -7,11 +7,13 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref } from "vue";
 
 const nacList = ref([
   { title: "地图飞线", route: "/map-line" },
   { title: "循环高亮", route: "/map-loop" },
+  { title: "同时支持", route: "/map-line-loop" },
+  { title: "hover支持", route: "/map-line-loop-hover" },
 ]);
 </script>
 
