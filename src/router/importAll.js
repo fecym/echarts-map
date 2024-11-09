@@ -3,7 +3,7 @@ const routeModules = import.meta.glob("./modules/*js", {
   eager: true,
 });
 
-export default Object.values(routeModules).flatMap((routeModule) => {
+export default Object.values(routeModules).flatMap(routeModule => {
   const routeConf = routeModule.default || routeModule;
   if (Array.isArray(routeConf)) {
     // 如果是数组，直接返回数组

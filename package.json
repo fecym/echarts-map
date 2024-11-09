@@ -6,8 +6,8 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "prelint": "eslint --fix --ext .js,.jsx,.vue src",
-    "lint": "prettier --write src/**/*{.js,.jsx,.vue}",
+    "prelint": "eslint --fix --ext .js,.vue src",
+    "lint": "prettier --write src/**/*{.js,.vue}",
     "preinstall": "npx only-allow pnpm",
     "prepare": "husky",
     "staged": "lint-staged"
@@ -40,7 +40,7 @@
     "vite": "^5.4.10"
   },
   "lint-staged": {
-    "src/**/*.{.js,.jsx,.vue}": [
+    "src/**/*.{.js,.vue}": [
       "pnpm lint"
     ]
   }
