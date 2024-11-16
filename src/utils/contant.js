@@ -1,5 +1,4 @@
 import mapJson from "@/assets/json/china.json";
-
 export const mapName = "China";
 export const mapOptions = {
   tooltip: {

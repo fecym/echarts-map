@@ -5,10 +5,11 @@
   </div>
 </template>
 <script setup>
-import { onBeforeUnmount, onMounted, ref } from "vue";
+import { defineAsyncComponent, onBeforeUnmount, onMounted, ref } from "vue";
 import * as echarts from "echarts";
 // import "echarts-gl";
 import mapJson from "@/assets/json/china.json";
+
 import {
   genLinesSeries,
   genPointSeries,
@@ -17,7 +18,8 @@ import {
   pinghuCoords,
   provinceCenters,
 } from "@/utils/contant";
-import MapHeader from "@/views/map-header.vue";
+
+const MapHeader = defineAsyncComponent(() => import("@/views/map-header.vue"));
 
 const mapChart = ref(null);
 

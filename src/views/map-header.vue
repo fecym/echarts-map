@@ -28,6 +28,11 @@ const nacList = ref([
     width: 90px;
     color: #fff;
     text-align: center;
+
+    a {
+      color: #ffffff;
+      text-decoration: none;
+    }
   }
 }
 </style>

@@ -5,12 +5,13 @@
   </div>
 </template>
 <script setup>
-import { onBeforeUnmount, onMounted, ref } from "vue";
+import { onBeforeUnmount, onMounted, ref, defineAsyncComponent } from "vue";
 import * as echarts from "echarts";
 // import "echarts-gl";
 import mapJson from "@/assets/json/china.json";
+
 import { mapName, mapOptions } from "@/utils/contant";
-import MapHeader from "@/views/map-header.vue";
+const MapHeader = defineAsyncComponent(() => import("@/views/map-header.vue"));
 
 const mapChart = ref(null);
 const timer = ref(null);

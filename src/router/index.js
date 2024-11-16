@@ -4,7 +4,8 @@ import moduleRoutes from "./importAll";
 const constantRoutes = [
   {
     path: "/",
-    redirect: "/map-line",
+    // redirect: "/map-line",
+    redirect: "/map-line-loop-hover",
   },
 ];
 

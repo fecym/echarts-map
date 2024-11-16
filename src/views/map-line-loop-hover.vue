@@ -7,9 +7,8 @@
 <script setup>
 import * as echarts from "echarts";
 // import "echarts-gl";
-import { onBeforeUnmount, onMounted, ref } from "vue";
+import { defineAsyncComponent, onBeforeUnmount, onMounted, ref } from "vue";
 import mapJson from "@/assets/json/china.json";
-
 import {
   genLinesSeries,
   genPointSeries,
@@ -19,9 +18,8 @@ import {
   pinghuCoords,
   provinceNames,
 } from "@/utils/contant";
-import MapHeader from "@/views/map-header.vue";
 import cloneDeep from "lodash/cloneDeep";
-
+const MapHeader = defineAsyncComponent(() => import("@/views/map-header.vue"));
 const mapChart = ref(null);
 const timer = ref(null);
 const index = ref(-1);
