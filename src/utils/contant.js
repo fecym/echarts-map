@@ -3,13 +3,23 @@ export const mapName = "China";
 export const mapOptions = {
   tooltip: {
     show: true,
+    backgroundColor: "transparent",
+    extraCssText: "border: none !important; box-shadow: none !important;",
     formatter: function (params) {
       // 根据需要进行数据处理或格式化操作
       if (params && params.data) {
         if (!params.data.name) return;
         const { adcode, name, value, dataIndex } = params.data;
         // 返回自定义的tooltip内容
-        return `省份: ${name}<br>adcode: ${adcode}<br>点位数: ${value}<br>dataIndex：${dataIndex}`;
+        // return `省份: ${name}<br>adcode: ${adcode}<br>点位数: ${value}<br>dataIndex：${dataIndex}`;
+        return `
+          <div id="map-tooltip">
+            <span>省份：${name}</span>
+            <span>adcode：${adcode}</span>
+            <span>点位数：${value}</span>
+            <span>dataIndex：${dataIndex}</span>
+          </div>
+        `;
       }
     },
   },
@@ -44,7 +54,7 @@ export const mapOptions = {
     },
     emphasis: {
       itemStyle: {
-        areaColor: "rgba(255, 255, 255, 0.5)", // 鼠标悬停时的区域颜色
+        // areaColor: "rgba(255, 255, 255, 0.5)", // 鼠标悬停时的区域颜色
       },
       label: {
         show: false,
