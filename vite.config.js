@@ -4,7 +4,8 @@ import vue from "@vitejs/plugin-vue";
 import viteCompression from "vite-plugin-compression";
 
 export default defineConfig({
-  base: "./",
+  // 微前端的 base 不可以设置为 `./`，否则会导致子应用的路由无法匹配
+  // base: "./",
   plugins: [
     vue(),
     viteCompression({
@@ -28,8 +29,11 @@ export default defineConfig({
   },
   server: {
     host: "0.0.0.0",
-    port: 3000,
+    port: 3100,
     cors: true,
+    headers: {
+      "Access-Control-Allow-Origin": "*",
+    },
   },
   build: {
     outDir: "dist",
